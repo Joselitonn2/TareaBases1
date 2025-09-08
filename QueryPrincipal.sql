@@ -37,7 +37,7 @@ INSERT dbo.Empleados (Nombre, Salario) VALUES ('Alberto Jimenez', 310000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Monica Campos', 275000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Hector Lopez', 335000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Vanessa Solano', 295000.00);
-INSERT dbo.Empleados (Nombre, Salario) VALUES ('Felipe Muñoz', 300000.00);
+INSERT dbo.Empleados (Nombre, Salario) VALUES ('Felipe MuÃ±oz', 300000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Isabel Navarro', 280000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Raul Mendez', 315000.00);
 INSERT dbo.Empleados (Nombre, Salario) VALUES ('Cristina Marin', 270000.00);
@@ -56,12 +56,19 @@ BEGIN
     ORDER BY Nombre ASC;
 END;
 
-CREATE PROCEDURE dbo.InsertarEmpleado
+CREATE OR ALTER PROCEDURE dbo.InsertarEmpleado
     @Nombre VARCHAR(128),
     @Salario MONEY
 AS
 BEGIN
     SET NOCOUNT ON;
+
+   
+    IF EXISTS (SELECT 1 FROM dbo.Empleados WHERE Nombre = @Nombre)
+    BEGIN
+        RAISERROR('Empleado ya existe.', 16, 1);
+        RETURN -1;
+    END;
 
     INSERT INTO dbo.Empleados (Nombre, Salario)
     VALUES (@Nombre, @Salario);
@@ -71,3 +78,4 @@ END;
 
 EXEC dbo.ObtenerEmpleados
 EXEC dbo.InsertarEmpleado @Nombre = 'Alejandro Luna', @Salario = 350000.00;
+
